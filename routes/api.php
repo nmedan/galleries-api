@@ -19,6 +19,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resource('galleries', 'GalleriesController');
 
+Route::get('search/{id}', 'GalleriesController@getByAuthor');
+
+Route::get('my-galleries', 'GalleriesController@getByUser');
+
 Route::group([   
     'middleware' => 'api',
     'prefix' => 'auth'    
