@@ -5,9 +5,10 @@
     "\\app\\Http",
     "\\app\\Http\\Controllers",
     "\\database",
+    "\\database\\factories",
     "\\database\\seeds",
     "\\routes"
   ],
-  "SelectedNode": "\\app\\Http\\Controllers\\AuthController.php",
+  "SelectedNode": "\\app\\Http\\Controllers\\GalleriesController.php",
   "PreviewInSolutionExplorer": false
 }
