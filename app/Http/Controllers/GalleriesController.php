@@ -54,6 +54,12 @@ class GalleriesController extends Controller
         ]);
     }
 
+    public function deleteComment($id) {
+        if (Auth()->check()) {
+            Comment::destroy($id);
+        }
+    }
+
     public function update(Request $request, $id)
     {
         
@@ -61,6 +67,8 @@ class GalleriesController extends Controller
 
     public function destroy($id)
     {
-        
+        if (Auth()->check()) {
+            Gallery::destroy($id);
+        }
     }
 }

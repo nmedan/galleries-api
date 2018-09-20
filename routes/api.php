@@ -23,6 +23,8 @@ Route::get('search/{id}', 'GalleriesController@getByAuthor');
 
 Route::get('my-galleries', 'GalleriesController@getByUser');
 
+Route::delete('delete-comment/{id}', 'GalleriesController@deleteComment');
+
 Route::post('galleries/{id}/comments', 'GalleriesController@postComment');
 
 Route::group([   

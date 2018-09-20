@@ -55,11 +55,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function refresh()
     {
         return $this->respondWithToken($this->guard()->refresh());
@@ -75,13 +70,11 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    public function getUser($id) {
+        $user = Auth()->user();
+        return $user;
+    }
+   
     protected function respondWithToken($token)
     {
         return response()->json([
@@ -91,11 +84,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Get the guard to be used during authentication.
-     *
-     * @return \Illuminate\Contracts\Auth\Guard
-     */
     public function guard()
     {
         return Auth::guard();
