@@ -23,6 +23,8 @@ Route::get('search/{id}', 'GalleriesController@getByAuthor');
 
 Route::get('my-galleries', 'GalleriesController@getByUser');
 
+Route::post('galleries/{id}/comments', 'GalleriesController@postComment');
+
 Route::group([   
     'middleware' => 'api',
     'prefix' => 'auth'    

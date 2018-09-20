@@ -4,11 +4,13 @@
     "\\app",
     "\\app\\Http",
     "\\app\\Http\\Controllers",
+    "\\app\\Http\\Requests",
     "\\database",
     "\\database\\factories",
+    "\\database\\migrations",
     "\\database\\seeds",
     "\\routes"
   ],
-  "SelectedNode": "\\app\\Http\\Controllers\\GalleriesController.php",
+  "SelectedNode": "\\app\\Comment.php",
   "PreviewInSolutionExplorer": false
 }

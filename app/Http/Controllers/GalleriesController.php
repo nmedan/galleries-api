@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreGalleryRequest;
+use App\Http\Requests\StoreCommentRequest;
 use Auth;
 use App\Gallery;
 use App\Image;
+use App\Comment;
 
 class GalleriesController extends Controller
 {
@@ -15,14 +18,18 @@ class GalleriesController extends Controller
         return $galleries;
     }
 
-    public function store(Request $request)
+    public function store(StoreGalleryRequest $request)
     {
-        
+        $gallery = Gallery::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'user_id' => Auth()->user()->id
+        ]);      
     }
 
     public function show($id)
     {
-        $gallery = Gallery::with('images')->find($id);
+        $gallery = Gallery::with('images', 'comments', 'user', 'comments.user')->find($id);
         return $gallery;
     }
 
@@ -37,6 +44,14 @@ class GalleriesController extends Controller
         $user_id = Auth()->user()->id;      
         $galleries = Gallery::where('user_id', $user_id)->with('images', 'user')->get();
         return $galleries;
+    }
+
+    public function postComment(StoreCommentRequest $request, $id) {
+        $comment = Comment::create([
+            'content' => $request->content,
+            'gallery_id' => $id,
+            'user_id' => Auth()->user()->id
+        ]);
     }
 
     public function update(Request $request, $id)
