@@ -25,6 +25,8 @@ class StoreGalleryRequest extends FormRequest
     {
         return [
             'name' => 'required|min:2|max:255',
+            'images' => 'array|min:1|',
+           
         ];
     }
 }

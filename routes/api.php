@@ -23,6 +23,8 @@ Route::get('search/{id}', 'GalleriesController@getByAuthor');
 
 Route::get('my-galleries', 'GalleriesController@getByUser');
 
+Route::get('filter/{term}', 'GalleriesController@filter');
+
 Route::get('galleries/edit/{id}', 'GalleriesController@edit');
 
 Route::delete('delete-comment/{id}', 'GalleriesController@deleteComment');

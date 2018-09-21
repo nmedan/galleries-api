@@ -14,7 +14,7 @@ class GalleriesController extends Controller
 {
     public function index()
     {
-        $galleries = Gallery::with('images')->with('user')->get();
+        $galleries = Gallery::with('images')->orderBy('created_at', 'desc')->with('user')->get();
         return $galleries;
     }
 
@@ -56,11 +56,13 @@ class GalleriesController extends Controller
     }
 
     public function postComment(StoreCommentRequest $request, $id) {
-        $comment = Comment::create([
-            'content' => $request->content,
-            'gallery_id' => $id,
-            'user_id' => Auth()->user()->id
-        ]);
+        if (Auth()->check()) {
+            $comment = Comment::create([
+                'content' => $request->content,
+                'gallery_id' => $id,
+                'user_id' => Auth()->user()->id
+            ]);
+        }
     }
 
     public function deleteComment($id)
@@ -99,6 +101,11 @@ class GalleriesController extends Controller
             $gallery->images()->save($image);
         }
 
+    }
+    
+    public function filter($term) 
+    {
+        return Gallery::with('images', 'comments', 'user', 'comments.user')->where('name', 'LIKE',  '%'.$term.'%')->get();
     }
 
     public function destroy($id)
