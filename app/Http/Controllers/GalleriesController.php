@@ -24,7 +24,16 @@ class GalleriesController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'user_id' => Auth()->user()->id
-        ]);      
+        ]);
+        
+        foreach($request->images as $img) {
+            $i = (object)$img;
+            $image = Image::create([
+                'image_url' => $i->image_url,
+                'gallery_id' => $gallery->id
+            ]);
+            $gallery->images()->save($image);
+        }
     }
 
     public function show($id)
@@ -54,20 +63,48 @@ class GalleriesController extends Controller
         ]);
     }
 
-    public function deleteComment($id) {
-        if (Auth()->check()) {
+    public function deleteComment($id)
+    {
+        $comment = Comment::findOrFail($id);
+        if (Auth()->user()->id == $comment->user_id) {
             Comment::destroy($id);
         }
     }
 
+    public function edit($id)
+    {
+        $gallery = Gallery::with('images', 'comments', 'user', 'comments.user')->findOrFail($id);
+        if (Auth()->user()->id == $gallery->user_id) {
+           return $gallery;
+        }
+        return null;
+    }
+
     public function update(Request $request, $id)
     {
-        
+        $gallery = Gallery::findOrFail($id);
+        $gallery->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'user_id' => Auth()->user()->id
+        ]);
+
+        $gallery->images()->delete();
+        foreach($request->images as $img) {
+            $i = (object)$img;
+            $image = Image::create([
+                'image_url' => $i->image_url,
+                'gallery_id' => $gallery->id
+            ]);
+            $gallery->images()->save($image);
+        }
+
     }
 
     public function destroy($id)
     {
-        if (Auth()->check()) {
+        $gallery = Gallery::findOrFail($id);
+        if (Auth()->user()->id == $gallery->user_id) {
             Gallery::destroy($id);
         }
     }

@@ -11,6 +11,6 @@
     "\\database\\seeds",
     "\\routes"
   ],
-  "SelectedNode": "\\app\\Comment.php",
+  "SelectedNode": "\\app\\Http\\Controllers\\GalleriesController.php",
   "PreviewInSolutionExplorer": false
 }
