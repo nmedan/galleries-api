@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use App\Http\Requests\StoreGalleryRequest;
 use App\Http\Requests\StoreCommentRequest;
 use Auth;
@@ -12,6 +13,7 @@ use App\Comment;
 
 class GalleriesController extends Controller
 {
+
     public function index()
     {
         $galleries = Gallery::with('images')->orderBy('created_at', 'desc')->with('user')->get();
@@ -42,18 +44,41 @@ class GalleriesController extends Controller
         return $gallery;
     }
 
-    public function getByAuthor($id) 
+    public function getByAuthor($id, $currentPage) 
     {
-        $galleries = Gallery::where('user_id', $id)->with('images', 'user')->get();
+        Paginator::currentPageResolver(function() use ($currentPage) {
+            return $currentPage;
+        });
+
+        $galleries = Gallery::where('user_id', $id)->orderBy('created_at', 'desc')->with('images', 'user')->paginate(10);
         return $galleries;
     }
 
-    public function getByUser() 
+    public function getByAuthorAll($id) 
     {
-        $user_id = Auth()->user()->id;      
-        $galleries = Gallery::where('user_id', $user_id)->with('images', 'user')->get();
+        $galleries = Gallery::where('user_id', $id)->orderBy('created_at', 'desc')->with('images', 'user')->get();
         return $galleries;
     }
+
+    public function getByUser($currentPage) 
+    {
+        Paginator::currentPageResolver(function() use ($currentPage) {
+            return $currentPage;
+        });
+
+        $user_id = Auth()->user()->id;      
+        $galleries = Gallery::where('user_id', $user_id)->orderBy('created_at', 'desc')->with('images', 'user')->paginate(10);
+        return $galleries;
+    }
+
+    public function getByUserAll() 
+    {
+        $user_id = Auth()->user()->id;      
+        $galleries = Gallery::where('user_id', $user_id)->orderBy('created_at', 'desc')->with('images', 'user')->get();
+        return $galleries;
+    }
+    
+
 
     public function postComment(StoreCommentRequest $request, $id) {
         if (Auth()->check()) {
@@ -103,9 +128,24 @@ class GalleriesController extends Controller
 
     }
     
-    public function filter($term) 
+    public function filter($term, $currentPage) 
     {
-        return Gallery::with('images', 'comments', 'user', 'comments.user')->where('name', 'LIKE',  '%'.$term.'%')->get();
+        Paginator::currentPageResolver(function() use ($currentPage) {
+            return $currentPage;
+        });
+
+        $galleries = Gallery::with('images', 'user')->where('name', 'LIKE',  '%'.$term.'%')->paginate(10);
+        return $galleries;
+    }
+
+    public function paginate($currentPage)
+    {
+        Paginator::currentPageResolver(function() use ($currentPage) {
+            return $currentPage;
+        });
+
+        $galleries = Gallery::with('images')->orderBy('created_at', 'desc')->with('user')->paginate(10);
+        return $galleries;
     }
 
     public function destroy($id)

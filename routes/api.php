@@ -19,17 +19,23 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resource('galleries', 'GalleriesController');
 
-Route::get('search/{id}', 'GalleriesController@getByAuthor');
+Route::get('authors/{id}', 'GalleriesController@getByAuthorAll');
 
-Route::get('my-galleries', 'GalleriesController@getByUser');
+Route::get('authors/{id}/{currentPage}', 'GalleriesController@getByAuthor');
 
-Route::get('filter/{term}', 'GalleriesController@filter');
+Route::get('my-galleries', 'GalleriesController@getByUserAll');
 
-Route::get('galleries/edit/{id}', 'GalleriesController@edit');
+Route::get('my-galleries/{currentPage}', 'GalleriesController@getByUser');
 
-Route::delete('delete-comment/{id}', 'GalleriesController@deleteComment');
+Route::get('edit/{id}', 'GalleriesController@edit');
+
+Route::get('filter/{term}/{currentPage}', 'GalleriesController@filter');
+
+Route::get('paginate/{currentPage}', 'GalleriesController@paginate');
 
 Route::post('galleries/{id}/comments', 'GalleriesController@postComment');
+
+Route::delete('galleries/{id}/comments', 'GalleriesController@deleteComment');
 
 Route::group([   
     'middleware' => 'api',
