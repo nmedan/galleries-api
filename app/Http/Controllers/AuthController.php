@@ -12,7 +12,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'getUser']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'me']]);
     }
 
     /**
@@ -71,8 +71,11 @@ class AuthController extends Controller
     }
 
     public function getUser($id) {
-        $user = Auth()->user();
-        return $user;
+        if (Auth()->check) {
+          $user = Auth()->user();
+          return $user;
+        }
+        return $null;
     }
    
     protected function respondWithToken($token)
