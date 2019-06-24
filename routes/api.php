@@ -17,23 +17,27 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('galleries', 'GalleriesController');
+Route::get('galleries/index/{currentPage}', 'GalleriesController@index');
 
-Route::get('authors/{id}', 'GalleriesController@getByAuthorAll');
+Route::get('galleries/index/{currentPage}/{term}', 'GalleriesController@filterAllGalleries');
+
+Route::get('galleries/details/{id}', 'GalleriesController@show');
 
 Route::get('authors/{id}/{currentPage}', 'GalleriesController@getByAuthor');
 
-Route::get('my-galleries', 'GalleriesController@getByUserAll');
+Route::get('authors/{id}/{currentPage}/{term}', 'GalleriesController@filterAuthorsGalleries');
 
 Route::get('my-galleries/{currentPage}', 'GalleriesController@getByUser');
 
+Route::get('my-galleries/{currentPage}/{term}', 'GalleriesController@filterUsersGalleries');
+
 Route::get('edit/{id}', 'GalleriesController@edit');
 
-Route::get('filter/{term}/{currentPage}', 'GalleriesController@filter');
-
-Route::get('paginate/{currentPage}', 'GalleriesController@paginate');
+Route::post('galleries', 'GalleriesController@store');
 
 Route::post('galleries/{id}/comments', 'GalleriesController@postComment');
+
+Route::put('galleries/{id}', 'GalleriesController@update');
 
 Route::delete('galleries/{id}/comments', 'GalleriesController@deleteComment');
 

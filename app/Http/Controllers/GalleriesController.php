@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use App\Http\Requests\StoreGalleryRequest;
 use App\Http\Requests\StoreCommentRequest;
+use Illuminate\Database\Eloquent;
 use Auth;
 use App\Gallery;
 use App\Image;
@@ -13,9 +14,13 @@ use App\Comment;
 
 class GalleriesController extends Controller
 {
-    public function index()
+    public function index($currentPage)
     {
-        $galleries = Gallery::with('images')->orderBy('created_at', 'desc')->with('user')->get();
+		Paginator::currentPageResolver(function() use ($currentPage) {
+            return $currentPage;
+        });
+        
+		$galleries = Gallery::with('images', 'user')->orderBy('created_at', 'desc')->paginate(2);	
         return $galleries;
     }
 
@@ -45,39 +50,55 @@ class GalleriesController extends Controller
 
     public function getByAuthor($id, $currentPage) 
     {
-        Paginator::currentPageResolver(function() use ($currentPage) {
+		Paginator::currentPageResolver(function() use ($currentPage) {
             return $currentPage;
         });
-
-        $galleries = Gallery::where('user_id', $id)->orderBy('created_at', 'desc')->with('images', 'user')->paginate(10);
-        return $galleries;
-    }
-
-    public function getByAuthorAll($id) 
-    {
-        $galleries = Gallery::where('user_id', $id)->orderBy('created_at', 'desc')->with('images', 'user')->get();
+		
+        $galleries = Gallery::where('user_id', $id)->orderBy('created_at', 'desc')->with('images', 'user')->paginate(2);
         return $galleries;
     }
 
     public function getByUser($currentPage) 
     {
-        Paginator::currentPageResolver(function() use ($currentPage) {
+		Paginator::currentPageResolver(function() use ($currentPage) {
             return $currentPage;
         });
-
+		
         $user_id = Auth()->user()->id;      
-        $galleries = Gallery::where('user_id', $user_id)->orderBy('created_at', 'desc')->with('images', 'user')->paginate(10);
+        $galleries = Gallery::where('user_id', $user_id)->orderBy('created_at', 'desc')->with('images', 'user')->paginate(2);
         return $galleries;
     }
-
-    public function getByUserAll() 
+	
+	public function filterAllGalleries($currentPage, $term)
     {
-        $user_id = Auth()->user()->id;      
-        $galleries = Gallery::where('user_id', $user_id)->orderBy('created_at', 'desc')->with('images', 'user')->get();
+		Paginator::currentPageResolver(function() use ($currentPage) {
+            return $currentPage;
+        });
+        
+		$galleries = Gallery::with('images', 'user')->where('name', 'LIKE', '%'.$term.'%')->orderBy('created_at', 'desc')->paginate(2);	
         return $galleries;
     }
-    
-
+	
+	public function filterAuthorsGalleries($id, $currentPage, $term) 
+    {
+		Paginator::currentPageResolver(function() use ($currentPage) {
+            return $currentPage;
+        });
+		   	
+        $galleries = Gallery::with('images', 'user')->where('user_id', $id)->where('name', 'LIKE', '%'.$term.'%')->orderBy('created_at', 'desc')->paginate(2);
+        return $galleries;
+    }
+	
+	public function filterUsersGalleries($currentPage, $term) 
+    {
+		Paginator::currentPageResolver(function() use ($currentPage) {
+            return $currentPage;
+        });
+		
+		$user_id = Auth()->user()->id; 
+        $galleries = Gallery::with('images', 'user')->where('user_id', $user_id)->where('name', 'LIKE', '%'.$term.'%')->orderBy('created_at', 'desc')->paginate(2);
+        return $galleries;
+    }
 
     public function postComment(StoreCommentRequest $request, $id) {
         if (Auth()->check()) {
@@ -125,26 +146,6 @@ class GalleriesController extends Controller
             $gallery->images()->save($image);
         }
 
-    }
-    
-    public function filter($term, $currentPage) 
-    {
-        Paginator::currentPageResolver(function() use ($currentPage) {
-            return $currentPage;
-        });
-
-        $galleries = Gallery::with('images', 'user')->where('name', 'LIKE',  '%'.$term.'%')->paginate(10);
-        return $galleries;
-    }
-
-    public function paginate($currentPage)
-    {
-        Paginator::currentPageResolver(function() use ($currentPage) {
-            return $currentPage;
-        });
-
-        $galleries = Gallery::with('images')->orderBy('created_at', 'desc')->with('user')->paginate(10);
-        return $galleries;
     }
 
     public function destroy($id)
